@@ -31,6 +31,16 @@ st.markdown("""
         color: #dc3545;
         font-weight: bold;
     }
+    .warning-message {
+        color: #ffc107;
+        font-weight: bold;
+    }
+    .info-box {
+        background-color: #e7f3fe;
+        border-left: 6px solid #2196F3;
+        padding: 1rem;
+        margin: 1rem 0;
+    }
     .summary-container {
         background-color: #f8f9fa;
         padding: 1.5rem;
@@ -49,6 +59,29 @@ st.markdown("""
 # Header
 st.markdown("<h1 class='main-header'>YouTube Transcript Summarizer</h1>", unsafe_allow_html=True)
 st.markdown("Enter a YouTube URL to get a summary of the video's transcript and ask follow-up questions.")
+
+# Information box about potential limitations
+with st.expander("⚠️ Important Information - Please Read"):
+    st.markdown("""
+    ### Potential Limitations
+    
+    This application uses the YouTube Transcript API to fetch video transcripts. Due to YouTube's policies:
+    
+    1. **Some videos may not have transcripts available**
+    2. **YouTube may block requests from cloud servers** (like the one hosting this app)
+    
+    If you encounter errors:
+    
+    - Try a different YouTube video
+    - Run this application locally on your computer
+    - Some educational videos and official channels are more likely to have accessible transcripts
+    
+    ### Example Videos That Usually Work
+    
+    - TED Talks: [https://www.youtube.com/watch?v=8jPQjjsBbIc](https://www.youtube.com/watch?v=8jPQjjsBbIc)
+    - Khan Academy: [https://www.youtube.com/watch?v=NKmGVE85GUU](https://www.youtube.com/watch?v=NKmGVE85GUU)
+    - MIT OpenCourseWare: [https://www.youtube.com/watch?v=HtSuA80QTyo](https://www.youtube.com/watch?v=HtSuA80QTyo)
+    """)
 
 # Initialize session state
 if 'transcript' not in st.session_state:
@@ -92,7 +125,18 @@ if st.button("Process Video"):
 
 # Display error if any
 if st.session_state.error:
-    st.markdown(f"<p class='error-message'>Error: {st.session_state.error}</p>", unsafe_allow_html=True)
+    st.markdown(f"<p class='error-message'>Error:</p>", unsafe_allow_html=True)
+    st.markdown(st.session_state.error)
+    
+    # If it's likely an IP blocking issue, show additional guidance
+    if "YouTube is blocking" in st.session_state.error or "IP" in st.session_state.error:
+        st.markdown("""
+        ### Try these example videos that may work better:
+        
+        - TED Talk: [https://www.youtube.com/watch?v=8jPQjjsBbIc](https://www.youtube.com/watch?v=8jPQjjsBbIc)
+        - Khan Academy: [https://www.youtube.com/watch?v=NKmGVE85GUU](https://www.youtube.com/watch?v=NKmGVE85GUU)
+        - MIT OpenCourseWare: [https://www.youtube.com/watch?v=HtSuA80QTyo](https://www.youtube.com/watch?v=HtSuA80QTyo)
+        """)
 
 # Display results if transcript is available
 if st.session_state.transcript:
